@@ -59,8 +59,8 @@ export default async function handler(req, res) {
       email: zapierPayload.email,
       name: zapierPayload.name,
       phone: zapierPayload.phone,
-      fn: session.metadata?.fn || '',
-      ln: session.metadata?.ln || '',
+      fn: session.metadata?.fn || (zapierPayload.name.split(' ')[0] || ''),
+      ln: session.metadata?.ln || (zapierPayload.name.split(' ').slice(1).join(' ') || ''),
     })
     return res.redirect(302, siteUrl + '/thank-you?' + redirectParams.toString())
   } catch (err) {
