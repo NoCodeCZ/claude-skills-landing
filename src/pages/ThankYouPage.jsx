@@ -39,6 +39,8 @@ export default function ThankYouPage() {
   const customerEmail = searchParams.get('email') || ''
   const customerName = searchParams.get('name') || ''
   const customerPhone = searchParams.get('phone') || ''
+  const customerFn = searchParams.get('fn') || ''
+  const customerLn = searchParams.get('ln') || ''
   const isBundle = plan === 'skills_and_n8n'
   const lines = isBundle ? BUNDLE_LINES : SKILLS_LINES
   const [visibleLines, setVisibleLines] = useState(0)
@@ -70,7 +72,8 @@ export default function ThankYouPage() {
       num_items: isBundle ? 2 : 1,
       email: customerEmail,
       phone: customerPhone,
-      first_name: customerName,
+      first_name: customerFn,
+      last_name: customerLn,
       external_id: sessionId,
     })
   }, [sessionId])

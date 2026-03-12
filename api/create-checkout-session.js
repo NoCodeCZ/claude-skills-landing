@@ -16,12 +16,16 @@ export default async function handler(req, res) {
   let email = ''
   let phone = ''
   let name = ''
+  let fn = ''
+  let ln = ''
   let upsell = false
   try {
     const body = req.body || {}
     email = (body.email || '').trim()
     phone = (body.phone || '').trim()
     name = (body.name || '').trim()
+    fn = (body.fn || '').trim()
+    ln = (body.ln || '').trim()
     upsell = body.upsell === true
   } catch {}
 
@@ -59,6 +63,12 @@ export default async function handler(req, res) {
   }
   if (name) {
     params.append('metadata[customer_name]', name)
+  }
+  if (fn) {
+    params.append('metadata[fn]', fn)
+  }
+  if (ln) {
+    params.append('metadata[ln]', ln)
   }
 
   try {

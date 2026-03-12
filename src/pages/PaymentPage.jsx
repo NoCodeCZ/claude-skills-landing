@@ -61,6 +61,8 @@ export default function PaymentPage() {
         body: JSON.stringify({
           email: email.trim(),
           name: fullName,
+          fn: firstName.trim(),
+          ln: lastName.trim(),
           phone: phone.trim(),
           upsell: upsellAdded,
         }),
