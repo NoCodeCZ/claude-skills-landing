@@ -172,7 +172,17 @@ export default function PaymentPage() {
                       <button
                         type="button"
                         className={`aa-co-toggle${upsellAdded ? ' on' : ''}`}
-                        onClick={() => setUpsellAdded(!upsellAdded)}
+                        onClick={() => {
+                          if (!upsellAdded) {
+                            trackEvent('orderbump', {
+                              content_name: '1,900+ N8N Workflows Bundle',
+                              content_type: 'product',
+                              value: UPSELL_PRICE,
+                              currency: 'THB',
+                            })
+                          }
+                          setUpsellAdded(!upsellAdded)
+                        }}
                         aria-label="Toggle upsell"
                       >
                         <span className="aa-co-toggle-knob" />
