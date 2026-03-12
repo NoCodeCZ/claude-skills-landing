@@ -9,7 +9,8 @@ const UPSELL_ORIGINAL = 997
 const UPSELL_PRICE = 497
 
 export default function PaymentPage() {
-  const [name, setName] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [upsellAdded, setUpsellAdded] = useState(false)
@@ -45,20 +46,21 @@ export default function PaymentPage() {
   async function handleSubmit(e) {
     e.preventDefault()
     if (loading) return
-    if (!name.trim() || !email.trim() || !phone.trim()) {
-      setError('กรุณากรอกชื่อ อีเมล และเบอร์โทรศัพท์')
+    if (!firstName.trim() || !lastName.trim() || !email.trim() || !phone.trim()) {
+      setError('กรุณากรอกชื่อ นามสกุล อีเมล และเบอร์โทรศัพท์')
       return
     }
     setLoading(true)
     setError(null)
 
+    const fullName = `${firstName.trim()} ${lastName.trim()}`
     try {
       const res = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: email.trim(),
-          name: name.trim(),
+          name: fullName,
           phone: phone.trim(),
           upsell: upsellAdded,
         }),
@@ -89,20 +91,32 @@ export default function PaymentPage() {
               <div className="aa-co-block">
                 <h2 className="aa-co-heading">ข้อมูลติดต่อในการสั่งซื้อ</h2>
                 <div className="aa-co-field">
-                  <label className="aa-co-label" htmlFor="co-name">
+                  <label className="aa-co-label">
                     ชื่อ (Facebook) / นามสกุล (Facebook) <span className="req">*</span>
                   </label>
                   <p className="aa-co-field-note">*สำคัญ : เพื่อใช้ในการ Verify เข้า Group คู่มือสอนใช้งาน</p>
-                  <input
-                    id="co-name"
-                    type="text"
-                    className="aa-co-input"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    onFocus={handleInitiateCheckout}
-                    placeholder="ชื่อ นามสกุล (ตามที่ใช้ใน Facebook)"
-                    required
-                  />
+                  <div className="aa-co-name-row">
+                    <input
+                      id="co-firstname"
+                      type="text"
+                      className="aa-co-input"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      onFocus={handleInitiateCheckout}
+                      placeholder="ชื่อ (Facebook)"
+                      required
+                    />
+                    <input
+                      id="co-lastname"
+                      type="text"
+                      className="aa-co-input"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      onFocus={handleInitiateCheckout}
+                      placeholder="นามสกุล (Facebook)"
+                      required
+                    />
+                  </div>
                 </div>
                 <div className="aa-co-field">
                   <label className="aa-co-label" htmlFor="co-email">

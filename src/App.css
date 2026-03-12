@@ -647,6 +647,14 @@ body {
   line-height: 1.4;
 }
 
+.aa-co-name-row {
+  display: flex;
+  gap: 10px;
+}
+.aa-co-name-row .aa-co-input {
+  flex: 1;
+}
+
 .aa-co-input {
   width: 100%;
   padding: 12px 14px;
