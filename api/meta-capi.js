@@ -1,3 +1,10 @@
+import { createHash } from 'crypto'
+
+function sha256(value) {
+  if (!value) return ''
+  return createHash('sha256').update(value.toLowerCase().trim()).digest('hex')
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST')
@@ -12,9 +19,11 @@ export default async function handler(req, res) {
   }
 
   let events = []
+  let testEventCode = ''
   try {
     const body = req.body || {}
     events = body.events || []
+    testEventCode = body.test_event_code || ''
   } catch {
     return res.status(400).json({ error: 'Invalid body' })
   }
@@ -23,7 +32,6 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'No events' })
   }
 
-  // Build CAPI event data
   const capiEvents = events.map((evt) => {
     const event = {
       event_name: evt.event_name,
@@ -36,25 +44,44 @@ export default async function handler(req, res) {
       },
     }
 
-    // Add fbp/fbc cookies if provided
+    // Event ID for deduplication with pixel
+    if (evt.event_id) event.event_id = evt.event_id
+
+    // Browser identifiers (no hashing)
     if (evt.fbp) event.user_data.fbp = evt.fbp
     if (evt.fbc) event.user_data.fbc = evt.fbc
 
-    // Add email hash if provided
-    if (evt.email) {
-      event.user_data.em = [evt.email.toLowerCase().trim()]
-    }
+    // Customer info (hashed)
+    if (evt.email) event.user_data.em = [sha256(evt.email)]
+    if (evt.phone) event.user_data.ph = [sha256(evt.phone)]
+    if (evt.first_name) event.user_data.fn = [sha256(evt.first_name)]
+    if (evt.last_name) event.user_data.ln = [sha256(evt.last_name)]
 
-    // Add custom data
-    if (evt.value || evt.currency || evt.content_name) {
+    // External ID
+    if (evt.external_id) event.user_data.external_id = [sha256(evt.external_id)]
+
+    // Custom data
+    if (evt.value !== undefined || evt.currency || evt.content_name || evt.content_ids || evt.content_type || evt.contents) {
       event.custom_data = {}
-      if (evt.value) event.custom_data.value = evt.value
+      if (evt.value !== undefined) event.custom_data.value = evt.value
       if (evt.currency) event.custom_data.currency = evt.currency
       if (evt.content_name) event.custom_data.content_name = evt.content_name
+      if (evt.content_ids) event.custom_data.content_ids = evt.content_ids
+      if (evt.content_type) event.custom_data.content_type = evt.content_type
+      if (evt.contents) event.custom_data.contents = evt.contents
+      if (evt.num_items) event.custom_data.num_items = evt.num_items
     }
 
     return event
   })
+
+  const payload = {
+    data: capiEvents,
+    access_token: accessToken,
+  }
+  if (testEventCode) {
+    payload.test_event_code = testEventCode
+  }
 
   try {
     const response = await fetch(
@@ -62,16 +89,14 @@ export default async function handler(req, res) {
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          data: capiEvents,
-          access_token: accessToken,
-        }),
+        body: JSON.stringify(payload),
       }
     )
 
     const data = await response.json()
 
     if (!response.ok) {
+      console.error('[meta-capi] Error:', JSON.stringify(data))
       return res.status(500).json({
         error: 'Meta CAPI error',
         detail: data.error?.message || JSON.stringify(data),

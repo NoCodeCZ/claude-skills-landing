@@ -2,7 +2,8 @@ export default async function handler(req, res) {
   // This endpoint is called via GET redirect from Stripe
   const sessionId = (req.query?.session_id || '').trim()
   const siteUrl = (process.env.VITE_SITE_URL || 'https://ccaiflowai.vercel.app').trim()
-  const thankYouUrl = siteUrl + '/thank-you?session_id=' + sessionId
+  let plan = 'skills_only'
+  const thankYouBase = siteUrl + '/thank-you?session_id=' + sessionId
 
   if (!sessionId) {
     return res.redirect(302, siteUrl + '/thank-you')
@@ -11,7 +12,7 @@ export default async function handler(req, res) {
   const secretKey = (process.env.STRIPE_SECRET_KEY || '').trim()
   if (!secretKey) {
     console.error('[post-purchase] No Stripe key configured')
-    return res.redirect(302, thankYouUrl)
+    return res.redirect(302, thankYouBase + '&plan=' + plan)
   }
 
   try {
@@ -32,7 +33,7 @@ export default async function handler(req, res) {
       email: session.customer_email || '',
       name: session.metadata?.customer_name || '',
       phone: session.metadata?.phone || '',
-      plan: session.metadata?.plan || 'skills_only',
+      plan: session.metadata?.plan || plan,
       amount_total: session.amount_total,
       currency: session.currency,
       payment_status: session.payment_status,
@@ -48,9 +49,21 @@ export default async function handler(req, res) {
     })
 
     console.log('[post-purchase] Zapier response:', zapRes.status)
+
+    plan = zapierPayload.plan
+
+    // Pass customer info to thank you page for Purchase pixel event
+    const redirectParams = new URLSearchParams({
+      session_id: sessionId,
+      plan,
+      email: zapierPayload.email,
+      name: zapierPayload.name,
+      phone: zapierPayload.phone,
+    })
+    return res.redirect(302, siteUrl + '/thank-you?' + redirectParams.toString())
   } catch (err) {
     console.error('[post-purchase] Error:', err.message)
   }
 
-  return res.redirect(302, thankYouUrl)
+  return res.redirect(302, thankYouBase + '&plan=' + plan)
 }

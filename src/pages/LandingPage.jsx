@@ -1,9 +1,36 @@
+import { useEffect } from 'react'
 import TerminalBar from '../components/TerminalBar'
 import CTA from '../components/CTA'
 import FAQItem from '../components/FAQItem'
 import Footer from '../components/Footer'
 import StickyFooterCTA from '../components/StickyFooterCTA'
+import { trackEvent, trackScrollDepth, trackTimeSpent } from '../lib/tracking'
+
 export default function LandingPage() {
+  useEffect(() => {
+    // ViewContent after 3 seconds
+    const vcTimer = setTimeout(() => {
+      trackEvent('ViewContent', {
+        content_name: 'Claude Skills Landing Page',
+        content_type: 'product',
+        value: 997,
+        currency: 'THB',
+      })
+    }, 3000)
+
+    // Scroll depth tracking
+    const cleanupScroll = trackScrollDepth([25, 50, 75, 95])
+
+    // Time spent tracking
+    const cleanupTime = trackTimeSpent([15, 30, 45, 60])
+
+    return () => {
+      clearTimeout(vcTimer)
+      cleanupScroll()
+      cleanupTime()
+    }
+  }, [])
+
   return (
     <div className="aa-sales-page aa-has-sticky-header">
 

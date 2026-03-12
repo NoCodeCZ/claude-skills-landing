@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import './App.css'
 import LandingPage from './pages/LandingPage'
@@ -7,8 +8,11 @@ import PrivacyPolicy from './pages/PrivacyPolicy'
 import Terms from './pages/Terms'
 import SocialProofNotification from './components/SocialProofNotification'
 import ScrollToTop from './components/ScrollToTop'
+import { initPixel } from './lib/tracking'
 
 function App() {
+  useEffect(() => { initPixel() }, [])
+
   return (
     <>
       <ScrollToTop />

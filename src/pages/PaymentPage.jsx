@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import Footer from '../components/Footer'
 import LineChat from '../components/LineChat'
+import { trackEvent } from '../lib/tracking'
 
 const MAIN_PRICE = 997
 const UPSELL_ORIGINAL = 997
@@ -14,8 +15,32 @@ export default function PaymentPage() {
   const [upsellAdded, setUpsellAdded] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const initiateCheckoutFired = useRef(false)
 
   const total = MAIN_PRICE + (upsellAdded ? UPSELL_PRICE : 0)
+
+  // AddToCart when landing on checkout
+  useEffect(() => {
+    trackEvent('AddToCart', {
+      content_name: 'Claude Skills Ultimate Bundle',
+      content_type: 'product',
+      content_ids: ['claude-skills-bundle'],
+      value: MAIN_PRICE,
+      currency: 'THB',
+    })
+  }, [])
+
+  // InitiateCheckout when user starts typing
+  function handleInitiateCheckout() {
+    if (initiateCheckoutFired.current) return
+    initiateCheckoutFired.current = true
+    trackEvent('InitiateCheckout', {
+      content_name: 'Claude Skills Ultimate Bundle',
+      content_type: 'product',
+      value: MAIN_PRICE,
+      currency: 'THB',
+    })
+  }
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -73,6 +98,7 @@ export default function PaymentPage() {
                     className="aa-co-input"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
+                    onFocus={handleInitiateCheckout}
                     placeholder="ชื่อ-นามสกุล หรือ ชื่อบริษัท"
                     required
                   />
@@ -87,6 +113,7 @@ export default function PaymentPage() {
                     className="aa-co-input"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    onFocus={handleInitiateCheckout}
                     placeholder="you@email.com"
                     required
                   />
@@ -101,6 +128,7 @@ export default function PaymentPage() {
                     className="aa-co-input"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
+                    onFocus={handleInitiateCheckout}
                     placeholder="08X-XXX-XXXX"
                     required
                   />
