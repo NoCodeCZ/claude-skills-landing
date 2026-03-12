@@ -87,11 +87,12 @@ export default function PaymentPage() {
 
               {/* Contact */}
               <div className="aa-co-block">
-                <h2 className="aa-co-heading">ข้อมูลติดต่อ</h2>
+                <h2 className="aa-co-heading">ข้อมูลติดต่อในการสั่งซื้อ</h2>
                 <div className="aa-co-field">
                   <label className="aa-co-label" htmlFor="co-name">
-                    ชื่อ-นามสกุล / ชื่อบริษัท <span className="req">*</span>
+                    ชื่อ (Facebook) / นามสกุล (Facebook) <span className="req">*</span>
                   </label>
+                  <p className="aa-co-field-note">*สำคัญ : เพื่อใช้ในการ Verify เข้า Group คู่มือสอนใช้งาน</p>
                   <input
                     id="co-name"
                     type="text"
@@ -99,14 +100,15 @@ export default function PaymentPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     onFocus={handleInitiateCheckout}
-                    placeholder="ชื่อ-นามสกุล หรือ ชื่อบริษัท"
+                    placeholder="ชื่อ นามสกุล (ตามที่ใช้ใน Facebook)"
                     required
                   />
                 </div>
                 <div className="aa-co-field">
                   <label className="aa-co-label" htmlFor="co-email">
-                    อีเมล <span className="req">*</span>
+                    อีเมลที่ใช้งานจริง <span className="req">*</span>
                   </label>
+                  <p className="aa-co-field-note">เพื่อเข้าถึง และรับ Claude Skills และ N8N Workflows</p>
                   <input
                     id="co-email"
                     type="email"
@@ -122,6 +124,7 @@ export default function PaymentPage() {
                   <label className="aa-co-label" htmlFor="co-phone">
                     เบอร์โทรศัพท์ <span className="req">*</span>
                   </label>
+                  <p className="aa-co-field-note">กรณีที่ต้องการซัพพอร์ต</p>
                   <input
                     id="co-phone"
                     type="tel"
