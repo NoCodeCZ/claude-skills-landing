@@ -43,11 +43,21 @@ export default function LandingPage() {
       {/* -- Hero -- */}
       <section className="aa-hero">
         <div className="aa-container">
+          <img src="/mascot.png" alt="Claude Skills Mascot" className="aa-hero-mascot" />
           <h1>
             <span className="accent">"แพ็กสุดยอด Claude Skill ครบชุด"</span><br />
             สำหรับคนทำธุรกิจ, ชาวออฟฟิศ และ ฟรีแลนซ์
           </h1>
-          <img src="/mascot.png" alt="Claude Skills Mascot" className="aa-hero-mascot" />
+          <div className="aa-hero-video">
+            <iframe
+              src="https://www.loom.com/embed/b5bd104d365845b489654b71342f0305?autoplay=1&hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true"
+              frameBorder="0"
+              webkitallowfullscreen="true"
+              mozallowfullscreen="true"
+              allowFullScreen
+              allow="autoplay"
+            />
+          </div>
           <p className="aa-hero-sub">
             Skills สำเร็จรูปกว่า 500+ ตัว ที่เปลี่ยน Claude ให้เป็นทีมปฏิบัติการธุรกิจครบวงจร
             ใช้ได้ทั้ง Claude.ai, Claude Code และ Cowork — คอนเทนต์ การตลาด การเงิน กฎหมาย

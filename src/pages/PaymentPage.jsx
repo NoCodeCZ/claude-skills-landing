@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import Footer from '../components/Footer'
 import LineChat from '../components/LineChat'
 import { trackEvent } from '../lib/tracking'
+import Confetti from '../components/Confetti'
 
 const MAIN_PRICE = 997
 const UPSELL_ORIGINAL = 997
@@ -82,12 +83,40 @@ export default function PaymentPage() {
 
   return (
     <div className="aa-sales-page">
+      <Confetti />
       <section className="aa-section aa-checkout-section">
         <div className="aa-container aa-container-wide">
           <form onSubmit={handleSubmit} className="aa-co-grid">
 
             {/* ── Left Column ── */}
             <div className="aa-co-left">
+
+              {/* Hero Title + Progress */}
+              <div className="aa-co-hero">
+                <h1 className="aa-co-hero-title">
+                  อีกนิดเดียว... ติดสปีดงานคุณ
+                  <br />
+                  ด้วย <span className="accent">Agentic Workflow</span>
+                </h1>
+                <div className="aa-co-progress">
+                  <span className="aa-co-progress-loading">LOADING...</span>
+                  <span className="aa-co-progress-label">75%</span>
+                  <div className="aa-co-progress-bar">
+                    {Array.from({ length: 20 }, (_, i) => (
+                      <span
+                        key={i}
+                        className={`aa-co-progress-block${i < 15 ? ' filled' : ''}`}
+                        style={i < 15 ? { animationDelay: `${i * 80}ms` } : undefined}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <img
+                  src="/order-steps.png"
+                  alt="3 ขั้นตอนง่ายๆ ในการ Order"
+                  className="aa-co-steps-img"
+                />
+              </div>
 
               {/* Contact */}
               <div className="aa-co-block">
@@ -178,34 +207,36 @@ export default function PaymentPage() {
               </div>
 
               {/* Exclusive Offer */}
-              <div className="aa-co-block">
+              <div className="aa-co-block aa-co-upsell-wrap">
+                <span className="aa-co-recommended-badge">Recommended</span>
                 <div className={`aa-co-upsell${upsellAdded ? ' added' : ''}`}>
 
-                  {/* Toggle header */}
-                  <div className="aa-co-upsell-header">
+                  {/* Toggle header — entire row is clickable */}
+                  <div
+                    className="aa-co-upsell-header"
+                    onClick={() => {
+                      if (!upsellAdded) {
+                        trackEvent('orderbump', {
+                          content_name: '1,900+ N8N Workflows Bundle',
+                          content_type: 'product',
+                          value: UPSELL_PRICE,
+                          currency: 'THB',
+                        })
+                      }
+                      setUpsellAdded(!upsellAdded)
+                    }}
+                    role="button"
+                    tabIndex={0}
+                  >
                     <h3 className="aa-co-upsell-question">
+                      {upsellAdded && <span className="aa-co-upsell-check">&#10003;</span>}
                       รับ N8N Workflows ไปด้วยไหมครับ? <span className="aa-co-upsell-discount">(ลด 50% เฉพาะหน้านี้เท่านั้น)</span>
                     </h3>
                     <div className="aa-co-upsell-toggle-area">
-                      <span className="aa-co-upsell-arrow">&#10132;</span>
-                      <button
-                        type="button"
-                        className={`aa-co-toggle${upsellAdded ? ' on' : ''}`}
-                        onClick={() => {
-                          if (!upsellAdded) {
-                            trackEvent('orderbump', {
-                              content_name: '1,900+ N8N Workflows Bundle',
-                              content_type: 'product',
-                              value: UPSELL_PRICE,
-                              currency: 'THB',
-                            })
-                          }
-                          setUpsellAdded(!upsellAdded)
-                        }}
-                        aria-label="Toggle upsell"
-                      >
+                      {!upsellAdded && <span className="aa-co-upsell-arrow">&#10132;</span>}
+                      <span className={`aa-co-toggle${upsellAdded ? ' on' : ''}`}>
                         <span className="aa-co-toggle-knob" />
-                      </button>
+                      </span>
                     </div>
                   </div>
 

@@ -135,12 +135,30 @@ export default function ThankYouPage() {
                   <div className="aa-thankyou-step">
                     <div className="aa-thankyou-step-num">2</div>
                     <div>
-                      <strong>เข้าร่วมกลุ่ม Skool</strong>
-                      <p>กดลิงก์ในอีเมลเพื่อเข้าร่วมกลุ่ม ดาวน์โหลดไฟล์ Skills {isBundle && 'และ N8N Workflows '}ได้ในกลุ่ม</p>
+                      <strong>ขั้นตอนการเข้าเรียน Skool</strong>
+                      <p>เพื่อเข้าถึงคู่มือสอนการใช้งาน Claude Skill กด Tabs Classroom เพื่อเข้ารับชม</p>
+                      <p>โปรดศึกษาวิธีเข้ากลุ่มและเข้าเรียนได้จากลิ้งค์ด้านล่างก่อนครับ</p>
+                      <div className="aa-thankyou-video-links">
+                        <a href="https://rebrand.ly/using-pc" target="_blank" rel="noopener noreferrer" className="aa-thankyou-video-btn">
+                          <span className="aa-thankyou-video-icon">&#128187;</span>
+                          <span>สำหรับใช้งาน PC</span>
+                        </a>
+                        <a href="https://rebrand.ly/using-mobile" target="_blank" rel="noopener noreferrer" className="aa-thankyou-video-btn">
+                          <span className="aa-thankyou-video-icon">&#128241;</span>
+                          <span>สำหรับใช้งานผ่านมือถือ</span>
+                        </a>
+                      </div>
                     </div>
                   </div>
                   <div className="aa-thankyou-step">
                     <div className="aa-thankyou-step-num">3</div>
+                    <div>
+                      <strong>ตรวจสอบอีเมลเชิญเข้ากลุ่ม</strong>
+                      <p>รบกวนตรวจสอบ email เพื่อเชิญเข้าใช้งาน (อาจอยู่ใน spam รบกวนตรวจสอบ)</p>
+                    </div>
+                  </div>
+                  <div className="aa-thankyou-step">
+                    <div className="aa-thankyou-step-num">4</div>
                     <div>
                       <strong>ดาวน์โหลด & ติดตั้ง</strong>
                       <p>
@@ -151,7 +169,7 @@ export default function ThankYouPage() {
                     </div>
                   </div>
                   <div className="aa-thankyou-step">
-                    <div className="aa-thankyou-step-num">4</div>
+                    <div className="aa-thankyou-step-num">5</div>
                     <div>
                       <strong>เริ่มใช้งาน</strong>
                       <p>บอก Claude สิ่งที่คุณต้องการ หรือพิมพ์ <code>/skill-name</code> ใน Claude Code</p>
