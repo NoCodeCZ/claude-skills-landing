@@ -1,7 +1,7 @@
 export default async function handler(req, res) {
   // This endpoint is called via GET redirect from Stripe
   const sessionId = (req.query?.session_id || '').trim()
-  const siteUrl = (process.env.VITE_SITE_URL || 'https://ccaiflowai.vercel.app').trim()
+  const siteUrl = (process.env.VITE_SITE_URL || 'https://cc.aiflowlab.co').trim()
   let plan = 'skills_only'
   const thankYouBase = siteUrl + '/thank-you?session_id=' + sessionId
 

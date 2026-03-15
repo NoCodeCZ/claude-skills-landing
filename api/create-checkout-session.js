@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Stripe key not configured' })
   }
 
-  const siteUrl = (process.env.VITE_SITE_URL || 'https://ccaiflowai.vercel.app').trim()
+  const siteUrl = (process.env.VITE_SITE_URL || 'https://cc.aiflowlab.co').trim()
   const successUrl = siteUrl + '/api/post-purchase?session_id={CHECKOUT_SESSION_ID}'
   const cancelUrl = siteUrl + '/checkout'
 
