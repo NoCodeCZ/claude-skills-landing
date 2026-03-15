@@ -25,42 +25,48 @@ export default async function handler(req, res) {
     )
     const session = await stripeRes.json()
 
-    console.log('[post-purchase] Stripe session status:', session.payment_status, 'session:', sessionId)
+    plan = session.metadata?.plan || plan
 
-    // Send to Zapier for any completed checkout (paid or unpaid for PromptPay)
-    // Stripe redirects to success_url only after successful payment
-    const zapierPayload = {
-      email: session.customer_email || '',
-      name: session.metadata?.customer_name || '',
-      phone: session.metadata?.phone || '',
-      plan: session.metadata?.plan || plan,
-      amount_total: session.amount_total,
-      currency: session.currency,
-      payment_status: session.payment_status,
-      session_id: sessionId,
+    // Only send to Zapier when payment is confirmed
+    if (session.payment_status === 'paid') {
+      const zapierUrl = process.env.ZAPIER_WEBHOOK_URL
+      if (zapierUrl) {
+        const zapierPayload = {
+          email: session.customer_email || '',
+          name: session.metadata?.customer_name || '',
+          phone: session.metadata?.phone || '',
+          plan,
+          amount_total: session.amount_total,
+          currency: session.currency,
+          payment_status: session.payment_status,
+          session_id: sessionId,
+        }
+
+        const zapRes = await fetch(zapierUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(zapierPayload),
+        })
+
+        if (!zapRes.ok) {
+          console.error('[post-purchase] Zapier webhook failed:', zapRes.status)
+        }
+      } else {
+        console.error('[post-purchase] ZAPIER_WEBHOOK_URL not configured')
+      }
     }
 
-    console.log('[post-purchase] Sending to Zapier:', JSON.stringify(zapierPayload))
-
-    const zapRes = await fetch('https://hooks.zapier.com/hooks/catch/5450603/ux1s1qe/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(zapierPayload),
-    })
-
-    console.log('[post-purchase] Zapier response:', zapRes.status)
-
-    plan = zapierPayload.plan
-
     // Pass customer info to thank you page for Purchase pixel event
+    const customerEmail = session.customer_email || ''
+    const customerName = session.metadata?.customer_name || ''
     const redirectParams = new URLSearchParams({
       session_id: sessionId,
       plan,
-      email: zapierPayload.email,
-      name: zapierPayload.name,
-      phone: zapierPayload.phone,
-      fn: session.metadata?.fn || (zapierPayload.name.split(' ')[0] || ''),
-      ln: session.metadata?.ln || (zapierPayload.name.split(' ').slice(1).join(' ') || ''),
+      email: customerEmail,
+      name: customerName,
+      phone: session.metadata?.phone || '',
+      fn: session.metadata?.fn || (customerName.split(' ')[0] || ''),
+      ln: session.metadata?.ln || (customerName.split(' ').slice(1).join(' ') || ''),
     })
     return res.redirect(302, siteUrl + '/thank-you?' + redirectParams.toString())
   } catch (err) {

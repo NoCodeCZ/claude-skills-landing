@@ -1,5 +1,5 @@
 const PIXEL_ID = import.meta.env.VITE_META_PIXEL_ID || ''
-const TEST_EVENT_CODE = 'TEST86618'
+const TEST_EVENT_CODE = ''
 
 // Initialize Meta Pixel
 let pixelInitialized = false
@@ -68,7 +68,7 @@ function fireCAPI(event) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       events: [event],
-      test_event_code: TEST_EVENT_CODE,
+      ...(TEST_EVENT_CODE ? { test_event_code: TEST_EVENT_CODE } : {}),
     }),
   }).catch(() => {})
 }

@@ -27,7 +27,14 @@ export default async function handler(req, res) {
     fn = (body.fn || '').trim()
     ln = (body.ln || '').trim()
     upsell = body.upsell === true
-  } catch {}
+  } catch (err) {
+    console.error('[create-checkout] Failed to parse request body:', err.message)
+  }
+
+  // Validate email format
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return res.status(400).json({ error: 'A valid email address is required' })
+  }
 
   const params = new URLSearchParams()
   params.append('payment_method_types[0]', 'card')

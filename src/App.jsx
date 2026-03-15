@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import './App.css'
 import LandingPage from './pages/LandingPage'
 import PaymentPage from './pages/PaymentPage'
@@ -22,6 +22,7 @@ function App() {
         <Route path="/thank-you" element={<ThankYouPage />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <SocialProofNotification />
     </>
